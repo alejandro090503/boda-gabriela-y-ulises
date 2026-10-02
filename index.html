@@ -26,8 +26,8 @@
   --bg:#fdfaf4;
   --surface:#f8efdc;
   --card:#ffffff;
-  --accent:#0d5a48;
-  --dark:#00342a;
+  --accent:#0a7d59;
+  --dark:#00694a;
   --text:#1c1a17;
   --gold:#866611;
   --gold-light:#F7E7CE;
@@ -116,6 +116,18 @@ body{background:var(--bg);color:var(--text);font-family:'Cormorant Garamond',ser
 .hero-amp{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:38px;color:#F7E7CE;display:block;margin:.12em 0;text-shadow:0 1px 10px rgba(0,0,0,.6)}
 .hero-date{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:21px;letter-spacing:4px;color:#F7E7CE;margin-top:22px;display:block;text-shadow:0 1px 10px rgba(0,0,0,.7)}
 
+/* Nombres del hero: se escriben de izquierda a derecha y luego flotan suavemente */
+.hero-bride,.hero-groom{clip-path:inset(-30% 105% -30% -12%);padding:0 .12em}
+.hero-on .hero-bride{animation:heroWrite 2.2s cubic-bezier(.45,.05,.3,1) .35s forwards,heroFloat 6s ease-in-out 2.8s infinite}
+.hero-on .hero-groom{animation:heroWrite 2.2s cubic-bezier(.45,.05,.3,1) 1.5s forwards,heroFloat 6s ease-in-out 4s infinite}
+@keyframes heroWrite{to{clip-path:inset(-30% -12% -30% -12%)}}
+@keyframes heroFloat{0%,100%{translate:0 0;rotate:0deg}50%{translate:0 -5px;rotate:-.6deg}}
+.hero-swash{display:block;width:min(64vw,250px);height:22px;margin:10px auto 0;overflow:visible}
+.hero-swash path{fill:none;stroke:#D4AF37;stroke-width:1.5;stroke-linecap:round;stroke-dasharray:420;stroke-dashoffset:420;filter:drop-shadow(0 1px 4px rgba(0,0,0,.45))}
+.hero-on .hero-swash path{animation:heroDraw 2.4s ease-in-out 3.2s forwards}
+@keyframes heroDraw{to{stroke-dashoffset:0}}
+@media(prefers-reduced-motion:reduce){.hero-bride,.hero-groom{clip-path:none}.hero-swash path{stroke-dashoffset:0}}
+
 /* ── CARD ── */
 .card{background-image:linear-gradient(rgba(255,255,255,.58),rgba(255,255,255,.58)),url('textura-embossed.jpg');background-size:cover;background-position:center;border:1px solid var(--border);border-radius:4px;padding:36px 28px;position:relative;margin:0 4px}
 .card::before{content:'';position:absolute;inset:10px;border:1px solid transparent;border-image:var(--gold-grad) 1;pointer-events:none}
@@ -188,9 +200,22 @@ body{background:var(--bg);color:var(--text);font-family:'Cormorant Garamond',ser
 .itin-dot{width:8px;height:8px;background:var(--gold);transform:rotate(45deg);border-radius:1px;margin-bottom:14px;animation:itinGold 2.8s ease-in-out infinite}
 .itin-dot.alt{background:var(--accent);animation:itinAlt 2.8s ease-in-out infinite 1s}
 @keyframes itinGold{0%,100%{box-shadow:0 0 0 4px rgba(176,141,46,.12),0 0 12px rgba(176,141,46,.3);transform:rotate(45deg) scale(1)}50%{box-shadow:0 0 0 10px rgba(176,141,46,.05),0 0 24px rgba(176,141,46,.58);transform:rotate(45deg) scale(1.22)}}
-@keyframes itinAlt{0%,100%{box-shadow:0 0 0 4px rgba(13,90,72,.18),0 0 12px rgba(13,90,72,.35);transform:rotate(45deg) scale(1)}50%{box-shadow:0 0 0 10px rgba(13,90,72,.08),0 0 22px rgba(13,90,72,.58);transform:rotate(45deg) scale(1.22)}}
+@keyframes itinAlt{0%,100%{box-shadow:0 0 0 4px rgba(10,125,89,.18),0 0 12px rgba(10,125,89,.35);transform:rotate(45deg) scale(1)}50%{box-shadow:0 0 0 10px rgba(10,125,89,.08),0 0 22px rgba(10,125,89,.58);transform:rotate(45deg) scale(1.22)}}
 .itin-time{font-family:'Cormorant Garamond',serif;font-size:clamp(30px,9vw,40px);font-weight:500;letter-spacing:4px;color:var(--dark);line-height:1;margin-bottom:6px}
 .itin-ev{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(17px,4.6vw,19px);letter-spacing:.5px;color:var(--dark);opacity:.85}
+
+/* ── ITINERARIO V3 — línea central con destello (de boda-cristal-y-humberto) ── */
+#siti{overflow:visible!important;padding-left:24px;padding-right:24px}
+.itv3{position:relative;display:flex;flex-direction:column;align-items:center;padding:10px 0 10px;margin-top:10px}
+.itv3-track{position:absolute;left:50%;transform:translateX(-50%);top:0;bottom:0;width:1px;z-index:0;background:linear-gradient(to bottom,transparent 0%,rgba(212,175,55,.45) 10%,rgba(10,125,89,.32) 45%,rgba(212,175,55,.4) 80%,transparent 100%)}
+.itv3-glow{position:absolute;left:50%;transform:translateX(-50%);top:0;width:5px;height:110px;background:linear-gradient(to bottom,transparent,rgba(212,175,55,.55) 20%,rgba(212,175,55,.9) 50%,rgba(212,175,55,.55) 80%,transparent);filter:blur(3px);border-radius:6px;z-index:1;pointer-events:none}
+.itv3-item{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;text-align:center;padding:30px 16px 4px;width:100%}
+.itv3-gem{width:9px;height:9px;background:linear-gradient(135deg,#F7E7CE 20%,#D4AF37 55%,#7a5c0e);transform:rotate(45deg);border-radius:2px;box-shadow:0 0 0 4px rgba(212,175,55,.14),0 0 18px rgba(212,175,55,.5);margin-bottom:18px;flex-shrink:0}
+.itv3-gem-em{background:linear-gradient(135deg,#5fd3a6 30%,#00694a);box-shadow:0 0 0 4px rgba(10,125,89,.14),0 0 18px rgba(10,125,89,.5)}
+.itv3-gem-mid{background:linear-gradient(135deg,#D4AF37 30%,#6f5410);box-shadow:0 0 0 4px rgba(212,175,55,.1),0 0 18px rgba(212,175,55,.38)}
+.itv3-time{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:500;letter-spacing:6px;color:var(--dark);line-height:1;margin-bottom:8px;text-indent:6px;background:var(--bg);padding:2px 10px}
+.itv3-ev{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:16px;color:var(--text);letter-spacing:3px;text-transform:uppercase;line-height:1.5;text-indent:3px;background:var(--bg);padding:0 10px}
+.itv3-item:last-child{padding-bottom:10px}
 
 /* ── DRESS CODE ── */
 .dc-figs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:32px auto 28px;max-width:340px;position:relative}
@@ -336,7 +361,7 @@ body{background:var(--bg);color:var(--text);font-family:'Cormorant Garamond',ser
 .invite-verse-end{font-weight:500}
 
 /* ── FOOTER ── */
-#footer{padding:96px 32px 52px;text-align:center;background:linear-gradient(to bottom,var(--bg) 0%,#00342a 16%,#013d31 48%,#002a22 72%,#001c17 100%);position:relative;overflow:visible}
+#footer{padding:96px 32px 52px;text-align:center;background:linear-gradient(to bottom,var(--bg) 0%,#00694a 16%,#005c41 48%,#004d37 72%,#003d2c 100%);position:relative;overflow:visible}
 #footer::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 40%,rgba(176,141,46,.05) 0%,transparent 70%);pointer-events:none}
 #footer::after{content:'';position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(to right,transparent,rgba(176,141,46,.28),rgba(247,231,206,.45),rgba(176,141,46,.28),transparent)}
 .footer-initials{display:flex;align-items:baseline;gap:8px;margin-bottom:12px;overflow:visible;justify-content:center}
@@ -410,6 +435,7 @@ body{background:var(--bg);color:var(--text);font-family:'Cormorant Garamond',ser
       <span class="hero-bride rv">Gabriela</span>
       <span class="hero-amp rv">&amp;</span>
       <span class="hero-groom rv">Ulises</span>
+      <svg class="hero-swash" viewBox="0 0 250 22" aria-hidden="true"><path d="M4 12 C40 2 78 2 110 11 C118 14 124 18 125 12 C126 6 118 5 119 11 C120 17 132 14 140 11 C172 2 210 2 246 12"/></svg>
       <span class="hero-date rv">Sábado<br>28 de Noviembre · 2026</span>
     </div>
     <div class="scroll-hint" id="scrollHint">
@@ -421,10 +447,10 @@ body{background:var(--bg);color:var(--text);font-family:'Cormorant Garamond',ser
 
   <!-- INTRO -->
   <section class="sec rv intro-card" style="text-align:center;overflow:hidden">
-    <span class="intro-corner ic-tl"><svg viewBox="0 0 90 90" fill="none" aria-hidden="true"><path d="M7 7 C26 19 41 29 57 30" stroke="#2a6b58" stroke-width="1" opacity=".5"/><path d="M7 7 C19 26 29 41 30 57" stroke="#2a6b58" stroke-width="1" opacity=".5"/><path d="M30 21 q9 -7 18 -3 q-7 8 -18 3Z" fill="#2a6b58" opacity=".22"/><path d="M45 26 q9 -6 17 -1 q-8 8 -17 1Z" fill="#2a6b58" opacity=".18"/><path d="M21 30 q-7 9 -3 18 q8 -7 3 -18Z" fill="#2a6b58" opacity=".22"/><path d="M26 45 q-6 9 -1 17 q8 -8 1 -17Z" fill="#2a6b58" opacity=".18"/><g transform="translate(12,12)" stroke="#2a6b58" stroke-width="1" opacity=".6" fill="none"><ellipse cx="0" cy="-7.5" rx="3" ry="6.5"/><ellipse cx="0" cy="-7.5" rx="3" ry="6.5" transform="rotate(72)"/><ellipse cx="0" cy="-7.5" rx="3" ry="6.5" transform="rotate(144)"/><ellipse cx="0" cy="-7.5" rx="3" ry="6.5" transform="rotate(216)"/><ellipse cx="0" cy="-7.5" rx="3" ry="6.5" transform="rotate(288)"/><circle cx="0" cy="0" r="2" fill="#2a6b58"/></g></svg></span>
-    <span class="intro-corner ic-tr"><svg viewBox="0 0 90 90" fill="none" aria-hidden="true"><path d="M7 7 C26 19 41 29 57 30" stroke="#2a6b58" stroke-width="1" opacity=".5"/><path d="M7 7 C19 26 29 41 30 57" stroke="#2a6b58" stroke-width="1" opacity=".5"/><path d="M30 21 q9 -7 18 -3 q-7 8 -18 3Z" fill="#2a6b58" opacity=".22"/><path d="M45 26 q9 -6 17 -1 q-8 8 -17 1Z" fill="#2a6b58" opacity=".18"/><path d="M21 30 q-7 9 -3 18 q8 -7 3 -18Z" fill="#2a6b58" opacity=".22"/><path d="M26 45 q-6 9 -1 17 q8 -8 1 -17Z" fill="#2a6b58" opacity=".18"/><g transform="translate(12,12)" stroke="#2a6b58" stroke-width="1" opacity=".6" fill="none"><ellipse cx="0" cy="-7.5" rx="3" ry="6.5"/><ellipse cx="0" cy="-7.5" rx="3" ry="6.5" transform="rotate(72)"/><ellipse cx="0" cy="-7.5" rx="3" ry="6.5" transform="rotate(144)"/><ellipse cx="0" cy="-7.5" rx="3" ry="6.5" transform="rotate(216)"/><ellipse cx="0" cy="-7.5" rx="3" ry="6.5" transform="rotate(288)"/><circle cx="0" cy="0" r="2" fill="#2a6b58"/></g></svg></span>
-    <span class="intro-corner ic-bl"><svg viewBox="0 0 90 90" fill="none" aria-hidden="true"><path d="M7 7 C26 19 41 29 57 30" stroke="#2a6b58" stroke-width="1" opacity=".5"/><path d="M7 7 C19 26 29 41 30 57" stroke="#2a6b58" stroke-width="1" opacity=".5"/><path d="M30 21 q9 -7 18 -3 q-7 8 -18 3Z" fill="#2a6b58" opacity=".22"/><path d="M45 26 q9 -6 17 -1 q-8 8 -17 1Z" fill="#2a6b58" opacity=".18"/><path d="M21 30 q-7 9 -3 18 q8 -7 3 -18Z" fill="#2a6b58" opacity=".22"/><path d="M26 45 q-6 9 -1 17 q8 -8 1 -17Z" fill="#2a6b58" opacity=".18"/><g transform="translate(12,12)" stroke="#2a6b58" stroke-width="1" opacity=".6" fill="none"><ellipse cx="0" cy="-7.5" rx="3" ry="6.5"/><ellipse cx="0" cy="-7.5" rx="3" ry="6.5" transform="rotate(72)"/><ellipse cx="0" cy="-7.5" rx="3" ry="6.5" transform="rotate(144)"/><ellipse cx="0" cy="-7.5" rx="3" ry="6.5" transform="rotate(216)"/><ellipse cx="0" cy="-7.5" rx="3" ry="6.5" transform="rotate(288)"/><circle cx="0" cy="0" r="2" fill="#2a6b58"/></g></svg></span>
-    <span class="intro-corner ic-br"><svg viewBox="0 0 90 90" fill="none" aria-hidden="true"><path d="M7 7 C26 19 41 29 57 30" stroke="#2a6b58" stroke-width="1" opacity=".5"/><path d="M7 7 C19 26 29 41 30 57" stroke="#2a6b58" stroke-width="1" opacity=".5"/><path d="M30 21 q9 -7 18 -3 q-7 8 -18 3Z" fill="#2a6b58" opacity=".22"/><path d="M45 26 q9 -6 17 -1 q-8 8 -17 1Z" fill="#2a6b58" opacity=".18"/><path d="M21 30 q-7 9 -3 18 q8 -7 3 -18Z" fill="#2a6b58" opacity=".22"/><path d="M26 45 q-6 9 -1 17 q8 -8 1 -17Z" fill="#2a6b58" opacity=".18"/><g transform="translate(12,12)" stroke="#2a6b58" stroke-width="1" opacity=".6" fill="none"><ellipse cx="0" cy="-7.5" rx="3" ry="6.5"/><ellipse cx="0" cy="-7.5" rx="3" ry="6.5" transform="rotate(72)"/><ellipse cx="0" cy="-7.5" rx="3" ry="6.5" transform="rotate(144)"/><ellipse cx="0" cy="-7.5" rx="3" ry="6.5" transform="rotate(216)"/><ellipse cx="0" cy="-7.5" rx="3" ry="6.5" transform="rotate(288)"/><circle cx="0" cy="0" r="2" fill="#2a6b58"/></g></svg></span>
+    <span class="intro-corner ic-tl"><svg viewBox="0 0 90 90" fill="none" aria-hidden="true"><path d="M7 7 C26 19 41 29 57 30" stroke="#12936b" stroke-width="1" opacity=".5"/><path d="M7 7 C19 26 29 41 30 57" stroke="#12936b" stroke-width="1" opacity=".5"/><path d="M30 21 q9 -7 18 -3 q-7 8 -18 3Z" fill="#12936b" opacity=".22"/><path d="M45 26 q9 -6 17 -1 q-8 8 -17 1Z" fill="#12936b" opacity=".18"/><path d="M21 30 q-7 9 -3 18 q8 -7 3 -18Z" fill="#12936b" opacity=".22"/><path d="M26 45 q-6 9 -1 17 q8 -8 1 -17Z" fill="#12936b" opacity=".18"/><g transform="translate(12,12)" stroke="#12936b" stroke-width="1" opacity=".6" fill="none"><ellipse cx="0" cy="-7.5" rx="3" ry="6.5"/><ellipse cx="0" cy="-7.5" rx="3" ry="6.5" transform="rotate(72)"/><ellipse cx="0" cy="-7.5" rx="3" ry="6.5" transform="rotate(144)"/><ellipse cx="0" cy="-7.5" rx="3" ry="6.5" transform="rotate(216)"/><ellipse cx="0" cy="-7.5" rx="3" ry="6.5" transform="rotate(288)"/><circle cx="0" cy="0" r="2" fill="#12936b"/></g></svg></span>
+    <span class="intro-corner ic-tr"><svg viewBox="0 0 90 90" fill="none" aria-hidden="true"><path d="M7 7 C26 19 41 29 57 30" stroke="#12936b" stroke-width="1" opacity=".5"/><path d="M7 7 C19 26 29 41 30 57" stroke="#12936b" stroke-width="1" opacity=".5"/><path d="M30 21 q9 -7 18 -3 q-7 8 -18 3Z" fill="#12936b" opacity=".22"/><path d="M45 26 q9 -6 17 -1 q-8 8 -17 1Z" fill="#12936b" opacity=".18"/><path d="M21 30 q-7 9 -3 18 q8 -7 3 -18Z" fill="#12936b" opacity=".22"/><path d="M26 45 q-6 9 -1 17 q8 -8 1 -17Z" fill="#12936b" opacity=".18"/><g transform="translate(12,12)" stroke="#12936b" stroke-width="1" opacity=".6" fill="none"><ellipse cx="0" cy="-7.5" rx="3" ry="6.5"/><ellipse cx="0" cy="-7.5" rx="3" ry="6.5" transform="rotate(72)"/><ellipse cx="0" cy="-7.5" rx="3" ry="6.5" transform="rotate(144)"/><ellipse cx="0" cy="-7.5" rx="3" ry="6.5" transform="rotate(216)"/><ellipse cx="0" cy="-7.5" rx="3" ry="6.5" transform="rotate(288)"/><circle cx="0" cy="0" r="2" fill="#12936b"/></g></svg></span>
+    <span class="intro-corner ic-bl"><svg viewBox="0 0 90 90" fill="none" aria-hidden="true"><path d="M7 7 C26 19 41 29 57 30" stroke="#12936b" stroke-width="1" opacity=".5"/><path d="M7 7 C19 26 29 41 30 57" stroke="#12936b" stroke-width="1" opacity=".5"/><path d="M30 21 q9 -7 18 -3 q-7 8 -18 3Z" fill="#12936b" opacity=".22"/><path d="M45 26 q9 -6 17 -1 q-8 8 -17 1Z" fill="#12936b" opacity=".18"/><path d="M21 30 q-7 9 -3 18 q8 -7 3 -18Z" fill="#12936b" opacity=".22"/><path d="M26 45 q-6 9 -1 17 q8 -8 1 -17Z" fill="#12936b" opacity=".18"/><g transform="translate(12,12)" stroke="#12936b" stroke-width="1" opacity=".6" fill="none"><ellipse cx="0" cy="-7.5" rx="3" ry="6.5"/><ellipse cx="0" cy="-7.5" rx="3" ry="6.5" transform="rotate(72)"/><ellipse cx="0" cy="-7.5" rx="3" ry="6.5" transform="rotate(144)"/><ellipse cx="0" cy="-7.5" rx="3" ry="6.5" transform="rotate(216)"/><ellipse cx="0" cy="-7.5" rx="3" ry="6.5" transform="rotate(288)"/><circle cx="0" cy="0" r="2" fill="#12936b"/></g></svg></span>
+    <span class="intro-corner ic-br"><svg viewBox="0 0 90 90" fill="none" aria-hidden="true"><path d="M7 7 C26 19 41 29 57 30" stroke="#12936b" stroke-width="1" opacity=".5"/><path d="M7 7 C19 26 29 41 30 57" stroke="#12936b" stroke-width="1" opacity=".5"/><path d="M30 21 q9 -7 18 -3 q-7 8 -18 3Z" fill="#12936b" opacity=".22"/><path d="M45 26 q9 -6 17 -1 q-8 8 -17 1Z" fill="#12936b" opacity=".18"/><path d="M21 30 q-7 9 -3 18 q8 -7 3 -18Z" fill="#12936b" opacity=".22"/><path d="M26 45 q-6 9 -1 17 q8 -8 1 -17Z" fill="#12936b" opacity=".18"/><g transform="translate(12,12)" stroke="#12936b" stroke-width="1" opacity=".6" fill="none"><ellipse cx="0" cy="-7.5" rx="3" ry="6.5"/><ellipse cx="0" cy="-7.5" rx="3" ry="6.5" transform="rotate(72)"/><ellipse cx="0" cy="-7.5" rx="3" ry="6.5" transform="rotate(144)"/><ellipse cx="0" cy="-7.5" rx="3" ry="6.5" transform="rotate(216)"/><ellipse cx="0" cy="-7.5" rx="3" ry="6.5" transform="rotate(288)"/><circle cx="0" cy="0" r="2" fill="#12936b"/></g></svg></span>
     <span class="eyebrow stagger-child">Con la bendición de Dios</span>
     <h1 class="heading intro-names stagger-child" style="margin-top:30px">Sindy Gabriela Bacab Puc</h1>
     <span class="intro-amp stagger-child" style="font-size:34px">&amp;</span>
@@ -560,18 +586,48 @@ body{background:var(--bg);color:var(--text);font-family:'Cormorant Garamond',ser
   </section>
 
   <!-- ITINERARIO -->
-  <section class="sec rv" style="text-align:center;overflow:hidden">
+  <section class="sec rv" id="siti" style="text-align:center">
     <span class="eyebrow stagger-child">El Programa del Día</span>
     <h2 class="heading-sm stagger-child">Itinerario</h2>
     <div class="orn stagger-child" style="margin-top:16px"><div class="orn-line"></div><div class="orn-diamond-sm"></div><div class="orn-diamond"></div><div class="orn-diamond-sm"></div><div class="orn-line"></div></div>
-    <div class="itin-list">
-      <div class="itin-item rv"><div class="itin-dot"></div><div class="itin-time">6:00 p.m.</div><div class="itin-ev">Ceremonia Religiosa</div></div>
-      <div class="itin-item rv"><div class="itin-dot alt"></div><div class="itin-time">7:00 p.m.</div><div class="itin-ev">Brindis</div></div>
-      <div class="itin-item rv"><div class="itin-dot"></div><div class="itin-time">8:00 p.m.</div><div class="itin-ev">Vals de Novios</div></div>
-      <div class="itin-item rv"><div class="itin-dot alt"></div><div class="itin-time">9:00 p.m.</div><div class="itin-ev">Cena</div></div>
-      <div class="itin-item rv"><div class="itin-dot"></div><div class="itin-time">10:00 p.m.</div><div class="itin-ev">Corte de Pastel</div></div>
-      <div class="itin-item rv"><div class="itin-dot alt"></div><div class="itin-time">11:00 p.m.</div><div class="itin-ev">Protocolo de Boda</div></div>
-      <div class="itin-item rv"><div class="itin-dot"></div><div class="itin-time">12:00 a.m.</div><div class="itin-ev">¡Fiesta y Baile!</div></div>
+    <div class="itv3">
+      <div class="itv3-track"></div>
+      <div class="itv3-glow" id="itvGlow"></div>
+      <div class="itv3-item">
+        <div class="itv3-gem"></div>
+        <div class="itv3-time">6:00 p.m.</div>
+        <div class="itv3-ev">Ceremonia Religiosa</div>
+      </div>
+      <div class="itv3-item">
+        <div class="itv3-gem itv3-gem-em"></div>
+        <div class="itv3-time">7:00 p.m.</div>
+        <div class="itv3-ev">Brindis</div>
+      </div>
+      <div class="itv3-item">
+        <div class="itv3-gem itv3-gem-mid"></div>
+        <div class="itv3-time">8:00 p.m.</div>
+        <div class="itv3-ev">Vals de Novios</div>
+      </div>
+      <div class="itv3-item">
+        <div class="itv3-gem itv3-gem-em"></div>
+        <div class="itv3-time">9:00 p.m.</div>
+        <div class="itv3-ev">Cena</div>
+      </div>
+      <div class="itv3-item">
+        <div class="itv3-gem"></div>
+        <div class="itv3-time">10:00 p.m.</div>
+        <div class="itv3-ev">Corte de Pastel</div>
+      </div>
+      <div class="itv3-item">
+        <div class="itv3-gem itv3-gem-mid"></div>
+        <div class="itv3-time">11:00 p.m.</div>
+        <div class="itv3-ev">Protocolo de Boda</div>
+      </div>
+      <div class="itv3-item">
+        <div class="itv3-gem itv3-gem-em"></div>
+        <div class="itv3-time">12:00 a.m.</div>
+        <div class="itv3-ev">¡Fiesta y Baile!</div>
+      </div>
     </div>
   </section>
 
@@ -583,12 +639,12 @@ body{background:var(--bg);color:var(--text);font-family:'Cormorant Garamond',ser
 
     <div class="dc-figs rv">
       <div class="dc-fig">
-        <img src="caballero.png" alt="Caballero — traje" loading="lazy">
+        <img src="caballero.png" alt="Caballero — traje semiformal sin corbata" loading="lazy">
         <span class="dc-fig-ttl">Caballeros</span>
         <span class="dc-fig-sub">Traje semiformal</span>
       </div>
       <div class="dc-fig">
-        <img src="dama.png" alt="Dama — vestido" loading="lazy">
+        <img src="dama.png" alt="Dama — vestido midi" loading="lazy">
         <span class="dc-fig-ttl">Damas</span>
         <span class="dc-fig-sub">Vestido semiformal</span>
       </div>
@@ -1107,7 +1163,7 @@ function initEnvelope(){
 function spawnGoldSpeck(container,seed){
   var d=document.createElement('div');d.className='petal';
   var sz=1.6+Math.random()*2.6;
-  var golds=['rgba(212,175,55,','rgba(176,141,46,','rgba(13,90,72,'];
+  var golds=['rgba(212,175,55,','rgba(176,141,46,','rgba(10,125,89,'];
   var c=golds[Math.floor(Math.random()*golds.length)];
   var op=(0.2+Math.random()*0.28).toFixed(2);
   d.style.cssText='left:'+(Math.random()*100)+'%;width:'+sz+'px;height:'+sz+'px;background:'+c+op+');border-radius:50%;position:absolute;top:0;box-shadow:0 0 '+(sz+2)+'px '+c+'0.28)';
@@ -1121,10 +1177,39 @@ function launchGoldDust(){
   setInterval(function(){spawnGoldSpeck(c,false);},450);
 }
 
+/* ── ITINERARIO V3 (de boda-cristal-y-humberto) ── */
+function initItinerary(){
+  var glow=document.getElementById('itvGlow'),section=document.getElementById('siti');
+  var items=document.querySelectorAll('.itv3-item');
+  if(!glow||!section)return;
+  ScrollTrigger.create({trigger:section,start:'top 58%',end:'bottom 42%',scrub:1.8,onUpdate:function(self){
+    var track=section.querySelector('.itv3-track');if(!track)return;
+    glow.style.top=(self.progress*(track.offsetHeight-55))+'px';
+  }});
+  items.forEach(function(item){
+    var gem=item.querySelector('.itv3-gem');
+    var gc=gem.classList.contains('itv3-gem-em')?'40,190,140':'232,201,110';
+    gsap.fromTo(gem,{scale:0,opacity:0},{scale:1,opacity:1,duration:.6,ease:'back.out(2.8)',
+      scrollTrigger:{trigger:item,start:'top 86%',once:true},
+      onComplete:function(){
+        gsap.timeline()
+          .to(gem,{scale:1.4,filter:'drop-shadow(0 0 20px rgba('+gc+',1))',duration:.3,ease:'power2.out'})
+          .to(gem,{scale:1,filter:'drop-shadow(0 0 5px rgba('+gc+',.35))',duration:.28,ease:'power2.in'})
+          .to(gem,{scale:1.2,filter:'drop-shadow(0 0 14px rgba('+gc+',.8))',duration:.22,ease:'power2.out'})
+          .to(gem,{scale:1,filter:'drop-shadow(0 0 4px rgba('+gc+',.25))',duration:.32,ease:'power2.in'});
+      }});
+    var els=[item.querySelector('.itv3-time'),item.querySelector('.itv3-ev')].filter(Boolean);
+    gsap.fromTo(els,{y:14,opacity:0},{y:0,opacity:1,duration:.8,ease:'power2.out',stagger:.08,
+      scrollTrigger:{trigger:item,start:'top 86%',once:true}});
+  });
+}
+
 /* ── MAIN ── */
 function initMain(){
   window.scrollTo(0,0);
+  document.body.classList.add('hero-on');
   launchGoldDust();
+  initItinerary();
 
   /* Countdown — 28 nov 2026 18:00, Quintana Roo (UTC-5 todo el año) */
   var target=new Date('2026-11-28T18:00:00-05:00');
@@ -1184,15 +1269,24 @@ function initMain(){
     if(!ring||cards.length===0)return;
     var n=cards.length,radius=240,rot=0,vel=0,isDrag=false,startX=0,startRot=0,lastX=0,rafId=null;
     cards.forEach(function(card,i){card.style.transform='rotateY('+(360/n*i)+'deg) translateZ('+radius+'px)';});
-    function setRot(r){rot=r;gsap.set(ring,{rotateY:rot});}
-    function inertia(){if(Math.abs(vel)<0.05){vel=0;return;}vel*=0.94;setRot(rot+vel);rafId=requestAnimationFrame(inertia);}
-    ring.addEventListener('mousedown',function(e){cancelAnimationFrame(rafId);isDrag=true;vel=0;startX=e.clientX;startRot=rot;lastX=e.clientX;ring.classList.add('dragging');});
-    window.addEventListener('mousemove',function(e){if(!isDrag)return;vel=(e.clientX-lastX)*.5;lastX=e.clientX;setRot(startRot+(e.clientX-startX)*.45);});
-    window.addEventListener('mouseup',function(){if(!isDrag)return;isDrag=false;ring.classList.remove('dragging');rafId=requestAnimationFrame(inertia);});
-    ring.addEventListener('touchstart',function(e){cancelAnimationFrame(rafId);isDrag=true;vel=0;startX=e.touches[0].clientX;startRot=rot;lastX=startX;},{passive:true});
-    window.addEventListener('touchmove',function(e){if(!isDrag)return;vel=(e.touches[0].clientX-lastX)*.5;lastX=e.touches[0].clientX;setRot(startRot+(e.touches[0].clientX-startX)*.45);},{passive:true});
-    window.addEventListener('touchend',function(){if(!isDrag)return;isDrag=false;rafId=requestAnimationFrame(inertia);});
-    setTimeout(function(){vel=6;rafId=requestAnimationFrame(inertia);},700);
+    /* Un solo bucle: sin arrastre, la velocidad vuelve suavemente al giro automático. */
+    var AUTO=-0.16;
+    function setRot(r){rot=r;ring.style.transform='rotateY('+rot+'deg)';}
+    function loop(){
+      if(!isDrag){vel+=(AUTO-vel)*0.035;setRot(rot+vel);}
+      rafId=requestAnimationFrame(loop);
+    }
+    function down(x){isDrag=true;vel=0;startX=x;startRot=rot;lastX=x;ring.classList.add('dragging');}
+    function move(x){if(!isDrag)return;vel=(x-lastX)*.5;lastX=x;setRot(startRot+(x-startX)*.45);}
+    function up(){if(!isDrag)return;isDrag=false;ring.classList.remove('dragging');}
+    ring.addEventListener('mousedown',function(e){down(e.clientX);});
+    window.addEventListener('mousemove',function(e){move(e.clientX);});
+    window.addEventListener('mouseup',up);
+    ring.addEventListener('touchstart',function(e){down(e.touches[0].clientX);},{passive:true});
+    window.addEventListener('touchmove',function(e){move(e.touches[0].clientX);},{passive:true});
+    window.addEventListener('touchend',up);
+    window.addEventListener('touchcancel',up);
+    rafId=requestAnimationFrame(loop);
   })();
 }
 
