@@ -55,6 +55,8 @@ body{background:var(--bg);color:var(--text);font-family:'Cormorant Garamond',ser
 .env-tap{position:absolute;bottom:72px;left:50%;transform:translateX(-50%);z-index:10;font-family:'Italiana',serif;font-size:14px;letter-spacing:5px;text-transform:uppercase;color:var(--gold);opacity:0;padding:16px 40px;white-space:nowrap;border:1px solid rgba(176,141,46,.45);border-radius:50px;background:rgba(245,244,240,.3);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .env-tap::before{content:'';position:absolute;inset:0;border-radius:50px;animation:envpulse 2s ease-out infinite}
 @keyframes envpulse{0%{transform:scale(1);opacity:.6}100%{transform:scale(1.28);opacity:0}}
+.env-skip{position:absolute;right:18px;bottom:26px;z-index:11;font-family:'Italiana',serif;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:#fdfbf6;background:rgba(20,16,10,.28);border:1px solid rgba(247,231,206,.55);border-radius:50px;padding:10px 18px;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .8s;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.env-skip.show{opacity:.85;pointer-events:auto}
 #env-flash{position:fixed;inset:0;z-index:9999;background:#f1f0ea;opacity:0;pointer-events:none}
 
 /* ── PARTÍCULAS ── */
@@ -408,8 +410,9 @@ body{background:var(--bg);color:var(--text);font-family:'Cormorant Garamond',ser
 <body>
 
 <div id="envelope-screen">
-  <img id="envImage" src="sobre.png" alt="Sobre de invitación Gabriela y Ulises">
-  <video id="envVideo" src="sobre-apertura.mp4" muted playsinline preload="auto" poster="sobre.png"></video>
+  <img id="envImage" src="sobre.jpg" alt="Sobre de invitación Gabriela y Ulises">
+  <video id="envVideo" src="https://bsjoelxktbvlavfoozhk.supabase.co/storage/v1/object/public/fotos-clientes/video/boda-gabriela-y-ulises/apertura.mp4" muted playsinline preload="auto" poster="sobre.jpg"></video>
+  <button class="env-skip" id="envSkip" type="button">Omitir</button>
   <div class="env-tap" id="envTap">Toca para abrir</div>
 </div>
 
@@ -1132,13 +1135,27 @@ function initEnvelope(){
     function play(){var p=envVideo.play();if(p&&p.catch)p.catch(function(){});if(envVideo.readyState>=2){crossfade();}else{envVideo.addEventListener('playing',crossfade,{once:true});setTimeout(crossfade,700);}}
     if(envVideo.readyState>=2)play();
     else{envVideo.load();envVideo.addEventListener('canplay',play,{once:true});setTimeout(play,1500);}
-    function finish(){if(finished)return;finished=true;mainWrap.style.visibility='visible';gsap.to(envScreen,{opacity:0,duration:1,ease:'power2.inOut',onComplete:function(){envScreen.style.display='none';initMain();}});}
-    /* Fade-out del sobre sincronizado con el fade del video (segundo 5→6) */
+    var envSkip=document.getElementById('envSkip');
+    /* El sobre se funde (dentro del mismo video) con los novios en la playa; al terminar,
+       la pantalla completa se desvanece despacio sobre el hero. */
+    function finish(){
+      if(finished)return;finished=true;
+      mainWrap.style.visibility='visible';
+      if(envSkip)envSkip.classList.remove('show');
+      gsap.delayedCall(.6,initMain);
+      gsap.to(envScreen,{opacity:0,duration:1.8,ease:'power1.inOut',onComplete:function(){envScreen.style.display='none';try{envVideo.pause();}catch(e){}}});
+    }
     envVideo.addEventListener('timeupdate',function(){
-      if(!finished && envVideo.currentTime>=5){finish();}
+      var d=envVideo.duration;
+      if(!finished&&d&&isFinite(d)&&envVideo.currentTime>=d-1.6){finish();}
+      if(envSkip&&!finished&&envVideo.currentTime>=6){envSkip.classList.add('show');}
     });
     envVideo.addEventListener('ended',finish,{once:true});
-    setTimeout(finish,6500);
+    envVideo.addEventListener('error',finish,{once:true});
+    if(envSkip)envSkip.addEventListener('click',function(ev){ev.stopPropagation();finish();});
+    /* Respaldos: si el video no arranca en 9 s, o algo lo deja colgado, se entra igual. */
+    setTimeout(function(){if(envVideo.currentTime<0.2)finish();},9000);
+    setTimeout(finish,48000);
   }
   envScreen.addEventListener('click',onTap,{passive:false});
   envScreen.addEventListener('touchstart',onTap,{passive:false});
