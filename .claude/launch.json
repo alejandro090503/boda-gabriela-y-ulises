@@ -1,0 +1,16 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "boda-gabriela-y-ulises",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "serve",
+        "-p",
+        "3691",
+        "."
+      ],
+      "port": 3691
+    }
+  ]
+}
