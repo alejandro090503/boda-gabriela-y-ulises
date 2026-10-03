@@ -1264,7 +1264,7 @@ function initEnvelope(){
       mainWrap.style.visibility='visible';
       var hv=document.getElementById('heroVideo');if(hv){var hp=hv.play();if(hp&&hp.catch)hp.catch(function(){});}
       setTimeout(initMain,500);
-      envScreen.style.transition='opacity 1.4s ease';requestAnimationFrame(function(){envScreen.style.opacity='0';});
+      envScreen.style.transition='opacity 1.4s ease';setTimeout(function(){envScreen.style.opacity='0';},30);
       setTimeout(function(){envScreen.style.display='none';try{envVideo.pause();}catch(e){}},1500);
     }
     envVideo.addEventListener('timeupdate',function(){
