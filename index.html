@@ -503,6 +503,17 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 .hero-bride,.hero-groom{font-size:clamp(80px,25vw,112px)}
 .heading{font-size:70px}.heading-sm{font-size:54px}
 .fi-letter{font-size:86px}
+/* Sección de nombres: sin pared floral, todo centrado, nombres en cursiva */
+#fecha{justify-content:center;background:transparent;min-height:auto}
+#fecha::before,#fecha::after{display:none}
+.fch-content{width:100%;max-width:360px;margin:0 auto;padding:80px 28px 72px}
+.fch-content::before{display:none}
+.fch-n1{font-family:'Luxurious Script',cursive;font-weight:400;text-transform:none;letter-spacing:0;font-size:clamp(58px,17vw,76px);line-height:1.15;color:var(--gold)}
+.fch-amp{color:var(--text)}
+.fch-honor{text-align:center}
+/* La cursiva Luxurious Script nunca va en negritas (ni sintéticas) */
+body{font-synthesis-weight:none;font-synthesis:none}
+.heading,.heading-sm,.hero-bride,.hero-groom,.fi-letter,.fch-n1,.fch-amp,.rsvp-guest,.env-title,.photo-band-quote,.invite-verse-rut,.rsvp-pases-num,.vinyl-label-text,.gift-bank-name{font-weight:400!important}
 </style>
 </head>
 <body>
@@ -540,7 +551,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 
   <!-- FECHA (réplica de la sección #fecha de boda-alejandro-y-mayreli) -->
   <section id="fecha">
-    <img class="fch-bg" src="fondo-floral.jpg" alt="" loading="eager">
     <div class="fch-content">
       <p class="fch-n1">Gabriela</p>
       <p class="fch-amp">y</p>
