@@ -912,6 +912,14 @@ footer{background:linear-gradient(180deg,rgba(253,251,246,0) 0,rgba(244,220,198,
       .then(function(r){ return r.json(); })
       .then(function(resp){
         var d = resp && resp.invitado;
+        /* Si el panel no tiene este nombre no se deja confirmar: el envío
+           crearía una invitación suelta y los contadores dejarían de cuadrar. */
+        if(resp && resp.ok && !d){
+          btnConf.disabled = true;
+          say('No encontramos tu invitación. Pide a los novios que te envíen tu enlace de nuevo.', ERR);
+          applyFreeze();
+          return;
+        }
         if(d && typeof d.pases === 'number' && d.pases > 0 && d.pases <= 20){ pasesAsignados = d.pases; }
         paintHeader();
         if(!frozen){ btnYes.disabled = false; btnNo.disabled = false; }
