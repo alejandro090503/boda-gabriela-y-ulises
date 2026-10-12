@@ -277,6 +277,15 @@ body::after{content:'';position:fixed;inset:0;z-index:50;pointer-events:none;opa
 .rsvp-input{width:100%;padding:15px 20px;border-radius:16px;border:1px solid var(--hair);background:#fff;font-family:var(--serif);font-size:17px;font-weight:500;color:var(--ink);outline:none;transition:border-color .4s,box-shadow .4s}
 .rsvp-input:focus{border-color:var(--em);box-shadow:0 0 0 4px rgba(15,79,99,.1)}
 .rsvp-input::placeholder{color:var(--ink-2);opacity:.6}
+.rsvp-input.rsvp-input-falta{border-color:#a3311f;box-shadow:0 0 0 4px rgba(163,49,31,.12)}
+.rsvp-contador-wrap{display:none;max-width:330px;margin:0 auto 18px;text-align:center}
+.rsvp-contador-nota{font-family:var(--serif);font-style:italic;font-size:17px;line-height:1.5;color:var(--ink-2);margin:0 auto 10px}
+.rsvp-contador{display:flex;align-items:center;justify-content:center;gap:20px;padding:8px 14px;border-radius:999px;background:rgba(168,132,42,.1);border:1px solid var(--hair-2)}
+.rsvp-contador-btn{width:46px;height:46px;flex-shrink:0;border-radius:50%;border:1px solid var(--em);background:#fff;color:var(--em);font-family:var(--serif);font-size:26px;font-weight:600;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .4s var(--ease),color .4s var(--ease)}
+.rsvp-contador-btn:hover:not(:disabled){background:var(--em);color:#fdf8ec}
+.rsvp-contador-btn:disabled{opacity:.35;cursor:default}
+.rsvp-contador-valor{font-family:var(--serif);font-size:38px;font-weight:600;line-height:1;color:var(--em);min-width:52px;text-align:center}
+.rsvp-contador-pie{font-weight:700;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin:10px auto 0}
 .rsvp-btn{width:100%;max-width:330px;justify-content:space-between;letter-spacing:.14em;font-size:13.5px;white-space:nowrap}
 .rsvp-btn:disabled{opacity:.55;cursor:not-allowed}
 #rsvp-feedback{display:none;max-width:330px;margin:14px auto 0;font-style:italic;font-size:16px;line-height:1.5}
@@ -733,6 +742,16 @@ footer{background:linear-gradient(180deg,rgba(253,251,246,0) 0,rgba(244,220,198,
           <button class="rsvp-toggle-btn" id="btnYes" type="button">Asistiré</button>
           <button class="rsvp-toggle-btn" id="btnNo" type="button">No podré asistir</button>
         </div>
+        <!-- Contador: cuántos de sus pases va a ocupar realmente -->
+        <div class="rsvp-contador-wrap" id="rsvp-contador-wrap">
+          <p class="rsvp-contador-nota" id="rsvp-contador-nota"></p>
+          <div class="rsvp-contador">
+            <button class="rsvp-contador-btn" id="rsvp-menos" type="button" aria-label="Quitar un pase">&minus;</button>
+            <span class="rsvp-contador-valor" id="rsvp-contador-valor" aria-live="polite">1</span>
+            <button class="rsvp-contador-btn" id="rsvp-mas" type="button" aria-label="Agregar un pase">+</button>
+          </div>
+          <p class="rsvp-contador-pie" id="rsvp-contador-pie"></p>
+        </div>
         <div class="rsvp-fields" id="rsvp-fields" style="display:none"></div>
         <button class="btn rsvp-btn" id="rsvp-confirm-btn" type="button"><span id="rsvp-btn-text">Confirmar asistencia</span><span class="ic"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></button>
       </div>
@@ -803,6 +822,8 @@ footer{background:linear-gradient(180deg,rgba(253,251,246,0) 0,rgba(244,220,198,
 
   var rsvpChoice = null;
   var savedNames = [];
+  /* Lo que el invitado va a ocupar: arranca en 1 y nunca pasa del tope */
+  var pasesAUsar = 1;
 
   var nameEl     = document.getElementById('rsvp-guest');
   var pasesNumEl = document.getElementById('rsvp-pases-num');
@@ -818,6 +839,12 @@ footer{background:linear-gradient(180deg,rgba(253,251,246,0) 0,rgba(244,220,198,
   var btnConf    = document.getElementById('rsvp-confirm-btn');
   var btnText    = document.getElementById('rsvp-btn-text');
   var feedEl     = document.getElementById('rsvp-feedback');
+  var contWrap   = document.getElementById('rsvp-contador-wrap');
+  var contNota   = document.getElementById('rsvp-contador-nota');
+  var contValor  = document.getElementById('rsvp-contador-valor');
+  var contPie    = document.getElementById('rsvp-contador-pie');
+  var btnMenos   = document.getElementById('rsvp-menos');
+  var btnMas     = document.getElementById('rsvp-mas');
   if(!btnConf || !btnYes) return;
 
   function say(msg, color){
@@ -837,22 +864,45 @@ footer{background:linear-gradient(180deg,rgba(253,251,246,0) 0,rgba(244,220,198,
   }
   paintHeader();
 
-  /* Un campo por pase. */
+  /* Un campo por cada pase que VA A USAR (no por todos los asignados). */
   function renderFields(){
     fieldsEl.innerHTML = '';
-    for(var i = 0; i < pasesAsignados; i++){
+    for(var i = 0; i < pasesAUsar; i++){
       var inp = document.createElement('input');
       inp.type = 'text';
       inp.className = 'rsvp-input';
-      inp.placeholder = pasesAsignados === 1 ? 'Tu nombre completo' : 'Nombre completo del invitado ' + (i+1);
+      inp.placeholder = pasesAUsar === 1 ? 'Tu nombre completo' : 'Nombre completo del invitado ' + (i+1);
       inp.autocomplete = 'off';
       inp.maxLength = 60;
       inp.disabled = frozen;
       inp.value = savedNames[i] || '';
-      (function(idx){ inp.addEventListener('input', function(){ savedNames[idx] = this.value; }); })(i);
+      (function(idx){ inp.addEventListener('input', function(){ savedNames[idx] = this.value; this.classList.remove('rsvp-input-falta'); }); })(i);
       fieldsEl.appendChild(inp);
     }
   }
+
+  /* Contador: solo aparece al elegir "Asistiré" y si tiene más de un pase. */
+  function pintaContador(){
+    var ver = rsvpChoice === 'yes' && pasesAsignados > 1;
+    contWrap.style.display = ver ? 'block' : 'none';
+    if(!ver) return;
+    contValor.textContent = pasesAUsar;
+    contNota.textContent = 'Tienes ' + pasesAsignados + ' pases reservados. Aumenta el número de pases que vayas a ocupar.';
+    contPie.textContent = pasesAUsar >= pasesAsignados ? 'Usarás todos tus pases' : pasesAUsar + ' de ' + pasesAsignados + ' pases';
+    btnMenos.disabled = frozen || pasesAUsar <= 1;
+    btnMas.disabled   = frozen || pasesAUsar >= pasesAsignados;
+  }
+  function setPases(n){
+    if(frozen) return;
+    var v = Math.max(1, Math.min(pasesAsignados, n));
+    if(v === pasesAUsar) return;
+    pasesAUsar = v;
+    pintaContador();
+    renderFields();
+    say('');
+  }
+  btnMenos.addEventListener('click', function(){ setPases(pasesAUsar - 1); });
+  btnMas.addEventListener('click',   function(){ setPases(pasesAUsar + 1); });
 
   /* Los campos de nombre solo existen si eligió asistir. */
   function selectRsvp(choice){
@@ -866,6 +916,7 @@ footer{background:linear-gradient(180deg,rgba(253,251,246,0) 0,rgba(244,220,198,
       fieldsEl.style.display = 'none';
       fieldsEl.innerHTML = '';
     }
+    pintaContador();
   }
   btnYes.addEventListener('click', function(){ if(!frozen){ selectRsvp('yes'); say(''); } });
   btnNo.addEventListener('click',  function(){ if(!frozen){ selectRsvp('no');  say(''); } });
@@ -901,6 +952,7 @@ footer{background:linear-gradient(180deg,rgba(253,251,246,0) 0,rgba(244,220,198,
     btnConf.disabled = true;
     editarBtn.disabled = true;
     fieldsEl.querySelectorAll('.rsvp-input').forEach(function(i){ i.disabled = true; });
+    btnMenos.disabled = true; btnMas.disabled = true;
     btnText.textContent = 'Fecha límite alcanzada';
     say('La fecha para confirmar asistencia ha pasado.');
   }
@@ -925,6 +977,8 @@ footer{background:linear-gradient(180deg,rgba(253,251,246,0) 0,rgba(244,220,198,
         if(!frozen){ btnYes.disabled = false; btnNo.disabled = false; }
         if(d && (d.estado === 'confirmado' || d.estado === 'declino')){
           if(d.nombres_confirmados && d.nombres_confirmados.length){ savedNames = d.nombres_confirmados.slice(); }
+          /* El contador arranca en cuántos pases había ocupado antes */
+          pasesAUsar = Math.min(pasesAsignados, Math.max(1, savedNames.length));
           selectRsvp(d.estado === 'confirmado' ? 'yes' : 'no');
           btnText.textContent = 'Actualizar respuesta';
           /* Con respuesta guardada la sección arranca CERRADA. */
@@ -957,6 +1011,30 @@ footer{background:linear-gradient(180deg,rgba(253,251,246,0) 0,rgba(244,220,198,
       if(nombres.length === 0){
         say('Por favor escribe al menos un nombre.', ERR);
         if(inputs[0]) inputs[0].focus();
+        return;
+      }
+      /* Un nombre por campo: "Ana y Luis" en un campo descuadra el panel */
+      var doble = null;
+      for(var k = 0; k < inputs.length; k++){
+        var malo = /[&\/+,]|\s(y|and)\s/i.test(inputs[k].value.trim());
+        inputs[k].classList.toggle('rsvp-input-falta', malo);
+        if(malo && !doble) doble = inputs[k];
+      }
+      if(doble){
+        say('Escribe un solo nombre en cada campo. Si vienen más personas, sube el contador y escribe cada nombre en su propio campo.', ERR);
+        doble.focus();
+        return;
+      }
+      /* Eligió más pases de los nombres que escribió */
+      if(nombres.length < pasesAUsar){
+        var faltan = pasesAUsar - nombres.length, primero = null;
+        for(var j = 0; j < inputs.length; j++){
+          if(!inputs[j].value.trim()){ inputs[j].classList.add('rsvp-input-falta'); if(!primero) primero = inputs[j]; }
+        }
+        say('Elegiste ' + pasesAUsar + ' pases pero escribiste ' + nombres.length + ' nombre' + (nombres.length === 1 ? '' : 's') +
+            '. Escribe ' + (faltan === 1 ? 'el nombre que falta' : 'los ' + faltan + ' nombres que faltan') +
+            ' o baja el contador a los pases que vas a utilizar.', ERR);
+        if(primero) primero.focus();
         return;
       }
     }
