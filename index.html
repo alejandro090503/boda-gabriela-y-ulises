@@ -1185,8 +1185,8 @@ function initMain(){
   (function(){var m=document.getElementById('meshIn');if(!m)return;var t=null;
     window.addEventListener('scroll',function(){if(t)return;t=requestAnimationFrame(function(){t=null;m.style.transform='translate3d(0,'+(-window.scrollY*0.06)+'px,0)';});},{passive:true});})();
 
-  /* Cuenta regresiva — 28 nov 2026 18:00, Quintana Roo (UTC-5) */
-  var target=new Date('2026-11-28T18:00:00-05:00');
+  /* Cuenta regresiva — 28 nov 2026 17:00, Quintana Roo (UTC-5) */
+  var target=new Date('2026-11-28T17:00:00-05:00');
   function cd(){
     var diff=target-Date.now(),ids=['Dias','Horas','Mins','Secs'];
     var v=diff<=0?['000','00','00','00']:[String(Math.floor(diff/864e5)).padStart(3,'0'),String(Math.floor(diff%864e5/36e5)).padStart(2,'0'),String(Math.floor(diff%36e5/6e4)).padStart(2,'0'),String(Math.floor(diff%6e4/1e3)).padStart(2,'0')];
