@@ -292,6 +292,12 @@ body::after{content:'';position:fixed;inset:0;z-index:50;pointer-events:none;opa
 .rsvp-gracias{max-width:330px;margin:0 auto}
 .rsvp-gracias-icon{color:var(--em);margin:0 auto 10px;display:block}
 .rsvp-gracias-title{font-family:var(--script);font-size:46px;line-height:1.1;color:var(--em);margin-bottom:6px}
+/* Número de mesa por invitado (lista de la anfitriona, 16 nov 2026) */
+.rsvp-mesas{max-width:340px;margin:4px auto 18px;display:grid;gap:12px}
+.rsvp-mesa{padding:16px 14px 14px;border:1px solid rgba(15,79,99,.28);border-radius:14px;background:rgba(255,253,247,.78);text-align:center}
+.rsvp-mesa-nombre{font-family:var(--serif);font-weight:600;font-size:21px;line-height:1.25;color:var(--ink);overflow-wrap:anywhere}
+.rsvp-mesa-lbl{display:block;margin-top:8px;font-family:var(--serif);font-weight:700;font-size:12.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);padding-left:.3em}
+.rsvp-mesa-num{display:block;font-family:var(--serif);font-weight:600;font-size:52px;line-height:1;color:var(--em)}
 .rsvp-gracias-sub{font-style:italic;font-size:18px;line-height:1.6;color:var(--ink-2);margin-bottom:18px}
 .rsvp-editar-btn{padding:12px 22px;border-radius:999px;border:1px solid var(--hair);background:transparent;cursor:pointer;font-family:var(--serif);font-style:italic;font-weight:600;font-size:16px;color:var(--gold)}
 .rsvp-editar-btn:disabled{opacity:.45;cursor:not-allowed}
@@ -761,6 +767,7 @@ footer{background:linear-gradient(180deg,rgba(253,251,246,0) 0,rgba(244,220,198,
         <p class="rsvp-gracias-sub" id="rsvp-gracias-sub"></p>
         <button class="rsvp-editar-btn" id="rsvp-editar-btn" type="button">Modificar mi respuesta</button>
       </div>
+      <div class="rsvp-mesas" id="rsvp-mesas" hidden></div>
       <p id="rsvp-feedback"></p>
       <span class="caps rsvp-limit" id="rsvp-limite">Confirma lo antes posible · así podremos preparar cada detalle pensando en ti</span>
     </div></div>
@@ -921,6 +928,27 @@ footer{background:linear-gradient(180deg,rgba(253,251,246,0) 0,rgba(244,220,198,
   btnYes.addEventListener('click', function(){ if(!frozen){ selectRsvp('yes'); say(''); } });
   btnNo.addEventListener('click',  function(){ if(!frozen){ selectRsvp('no');  say(''); } });
 
+  /* Número de mesa (lista que mandó la anfitriona). Por invitación del panel;
+     "x" = nombres confirmados que no venían en la lista (sin mesa). */
+  var MESAS_GU = {"alfredo gonzalez":{"m":3,"x":[]},"alvaro bacab":{"m":7,"x":[]},"annet michelle":{"m":1,"x":[]},"antonio sanchez":{"m":9,"x":[]},"arumi cuevas":{"m":6,"x":["alma rosa quiam"]},"bruno":{"m":10,"x":[]},"caleb & are":{"m":4,"x":[]},"con amor para mis padres❤":{"m":6,"x":[]},"dennis & leydi":{"m":7,"x":[]},"diana & angel":{"m":8,"x":[]},"dulce flor":{"m":7,"x":[]},"eduardo & vero":{"m":3,"x":[]},"edwin puc":{"m":4,"x":[]},"famila lopez araiza":{"m":3,"x":[]},"familia camara gomez":{"m":2,"x":[]},"familia castillejos gomez":{"m":2,"x":[]},"familia cordova dominguez":{"m":1,"x":[]},"familia gomez valencia":{"m":2,"x":[]},"fatima silva":{"m":1,"x":[]},"fernando":{"m":10,"x":[]},"flor & julio":{"m":9,"x":[]},"guadalupe bacab":{"m":6,"x":[]},"heyder & valeria":{"m":7,"x":[]},"hugo lopez":{"m":9,"x":[]},"ilian & angel":{"m":4,"x":[]},"irwin salvador":{"m":9,"x":[]},"ivonne & sergio":{"m":1,"x":[]},"jairo campos":{"m":5,"x":[]},"jenny & josue":{"m":5,"x":[]},"jenny & manuel":{"m":8,"x":[]},"joana rodriguez":{"m":1,"x":[]},"jose luis tafolla":{"m":9,"x":[]},"jose puc":{"m":2,"x":[]},"josue puc":{"m":4,"x":[]},"jovita lopez duran":{"m":3,"x":[]},"kenia cabrera":{"m":4,"x":[]},"leo & naye":{"m":8,"x":[]},"litzy & jose":{"m":5,"x":[]},"lore & sam":{"m":8,"x":[]},"marcos":{"m":10,"x":[]},"maria & valentin":{"m":7,"x":[]},"mercedes bacab":{"m":6,"x":[]},"meyalli martinez":{"m":5,"x":[]},"miguel angel lopez":{"m":3,"x":[]},"nacho":{"m":10,"x":[]},"nicol bacab":{"m":8,"x":[]},"oscar & july":{"m":6,"x":[]},"prima leslie bacab":{"m":8,"x":[]},"primo jair":{"m":5,"x":[]},"rafael":{"m":10,"x":[]},"sandy & saulo":{"m":4,"x":[]},"sonya hernandez":{"m":6,"x":[]},"suemi cabrera":{"m":2,"x":[]},"tia silvia puc":{"m":2,"x":[]},"tio alvaro":{"m":6,"x":[]},"yanin junco":{"m":1,"x":["tania junco"]},"yimi & cristal":{"m":7,"x":[]}};
+  function claveM(x){ return String(x || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, ' ').trim(); }
+  var mesasEl = document.getElementById('rsvp-mesas');
+  function pintarMesas(estado, nombres){
+    var info = MESAS_GU[claveM(urlPara)];
+    mesasEl.innerHTML = '';
+    if(!info || estado === 'declino'){ mesasEl.hidden = true; return; }
+    var lista = (nombres || []).filter(function(n){ return n && String(n).trim() && info.x.indexOf(claveM(n)) < 0; });
+    if(!lista.length) lista = [urlPara];
+    lista.forEach(function(n){
+      var c = document.createElement('div'); c.className = 'rsvp-mesa';
+      var p = document.createElement('p'); p.className = 'rsvp-mesa-nombre'; p.textContent = n;
+      var l = document.createElement('span'); l.className = 'rsvp-mesa-lbl'; l.textContent = 'Número de mesa';
+      var v = document.createElement('span'); v.className = 'rsvp-mesa-num'; v.textContent = info.m;
+      c.appendChild(p); c.appendChild(l); c.appendChild(v); mesasEl.appendChild(c);
+    });
+    mesasEl.hidden = false;
+  }
+
   /* Bandeja <-> agradecimiento. Siempre hay ruta de regreso. */
   function mostrarGracias(estado, nombres){
     var lista = (nombres || []).filter(function(n){ return n && String(n).trim(); });
@@ -936,10 +964,12 @@ footer{background:linear-gradient(180deg,rgba(253,251,246,0) 0,rgba(244,220,198,
     bandejaEl.style.display = 'none';
     graciasEl.style.display = '';
     editarBtn.disabled = frozen;
+    pintarMesas(estado, lista);
     say('');
   }
   function abrirBandeja(){
     graciasEl.style.display = 'none';
+    mesasEl.hidden = true;
     bandejaEl.style.display = '';
     say('');
   }
@@ -983,7 +1013,7 @@ footer{background:linear-gradient(180deg,rgba(253,251,246,0) 0,rgba(244,220,198,
           btnText.textContent = 'Actualizar respuesta';
           /* Con respuesta guardada la sección arranca CERRADA. */
           mostrarGracias(d.estado, d.nombres_confirmados || []);
-        }
+        } else if(d){ pintarMesas('pendiente', []); }
         applyFreeze();
       })
       .catch(function(){
